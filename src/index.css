@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+body {
+  @apply bg-stone-50 text-stone-900 antialiased;
+}
+
+/* Visible focus for keyboard users */
+:focus-visible {
+  outline: 3px solid #1d4ed8;
+  outline-offset: 2px;
+}
