@@ -1,10 +1,13 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router'
 import ChapterBoxLanding from '../components/ChapterBoxLanding.tsx'
+import { useRovingFocus } from '../hooks/useRovingFocus.ts'
 import { generateVariants } from '../lib/combinations.ts'
+import { isTextEntryTarget } from '../lib/keyboard.ts'
 import { getTest } from '../lib/storage.ts'
 
-type Width = 'desktop' | 'phone'
+const WIDTHS = ['desktop', 'phone'] as const
+type Width = (typeof WIDTHS)[number]
 
 export default function PreviewPage() {
   const { id = '' } = useParams()
@@ -12,6 +15,25 @@ export default function PreviewPage() {
   const variants = useMemo(() => (test ? generateVariants(test.id, test.options) : []), [test])
   const [index, setIndex] = useState(0)
   const [width, setWidth] = useState<Width>('desktop')
+  // Radio group: arrow keys move focus and select, as in the WAI-ARIA radio pattern.
+  const { getItemProps } = useRovingFocus<HTMLButtonElement>({
+    count: WIDTHS.length,
+    orientation: 'horizontal',
+    onMove: (i) => setWidth(WIDTHS[i]),
+  })
+
+  const count = variants.length
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      // Skip typing, shortcuts (Alt+Left = browser back) and keys a widget already handled.
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
+      if (isTextEntryTarget(e.target) || count === 0) return
+      if (e.key === 'ArrowLeft') setIndex((i) => (i - 1 + count) % count)
+      else if (e.key === 'ArrowRight') setIndex((i) => (i + 1) % count)
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [count])
 
   if (!test || variants.length === 0) {
     return (
@@ -45,20 +67,29 @@ export default function PreviewPage() {
         <button type="button" className={btn} onClick={() => go(1)} aria-label="Next version">
           →
         </button>
-        <div role="group" aria-label="Preview width" className="ml-auto flex gap-2">
-          {(['desktop', 'phone'] as const).map((w) => (
-            <button
-              key={w}
-              type="button"
-              aria-pressed={width === w}
-              onClick={() => setWidth(w)}
-              className={`${btn} ${width === w ? 'bg-stone-900 text-white' : ''}`}
-            >
-              {w === 'desktop' ? '🖥️ Desktop' : '📱 Phone'}
-            </button>
-          ))}
+        <div role="radiogroup" aria-label="Preview width" className="ml-auto flex gap-2">
+          {WIDTHS.map((w, i) => {
+            const roving = getItemProps(i)
+            return (
+              <button
+                key={w}
+                type="button"
+                role="radio"
+                aria-checked={width === w}
+                {...roving}
+                onClick={() => {
+                  roving.onClick()
+                  setWidth(w)
+                }}
+                className={`${btn} ${width === w ? 'bg-stone-900 text-white' : ''}`}
+              >
+                {w === 'desktop' ? '🖥️ Desktop' : '📱 Phone'}
+              </button>
+            )
+          })}
         </div>
       </div>
+      <p className="mt-2 text-sm text-stone-700">Tip: use ← → to switch versions</p>
 
       <div
         className={`mx-auto mt-6 overflow-hidden rounded-xl border border-stone-300 shadow ${

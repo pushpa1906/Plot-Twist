@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router'
 import OptionListEditor from '../components/OptionListEditor.tsx'
 import PalettePicker from '../components/PalettePicker.tsx'
 import { buildTest, cleanList, validateBuilder, type BuilderErrors } from '../lib/builder.ts'
+import { versionCountLabel } from '../lib/format.ts'
 import { saveTest } from '../lib/storage.ts'
 
 export default function BuilderPage() {
@@ -64,7 +65,7 @@ export default function BuilderPage() {
           )}
         </fieldset>
         <p aria-live="polite" className="text-stone-700">
-          This will create <strong>{variantCount}</strong> {variantCount === 1 ? 'version' : 'versions'}.
+          This will create <strong>{versionCountLabel(variantCount)}</strong>.
         </p>
         <button type="submit" className="rounded bg-stone-900 px-5 py-2 font-semibold text-white">
           Create test
