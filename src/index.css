@@ -1,11 +1,44 @@
 @import "tailwindcss";
 
-body {
-  @apply bg-stone-50 text-stone-900 antialiased;
+/* Design tokens: defined once, used everywhere as bg-paper, text-ink, text-plum, font-serif, etc. */
+@theme {
+  --color-paper: #fbf7f0;
+  --color-paper-deep: #f3ebdc;
+  --color-ink: #1f1b16;
+  --color-ink-soft: #4a4238;
+  --color-line: #e3d9c6;
+  --color-plum: #5b2a6b;
+  --color-plum-dark: #431d50;
+  --color-plum-tint: #efe3f3;
+
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Visible focus for keyboard users */
+body {
+  @apply bg-paper font-sans text-ink antialiased;
+}
+
+h1,
+h2,
+h3 {
+  @apply font-serif;
+}
+
+/* Visible focus for keyboard users (plum ring with a paper halo works on light and dark fills) */
 :focus-visible {
-  outline: 3px solid #1d4ed8;
+  outline: 3px solid var(--color-plum);
   outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--color-paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

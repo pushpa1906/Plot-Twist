@@ -37,9 +37,9 @@ export default function PalettePicker({ selected, onChange }: PalettePickerProps
               roving.onClick()
               toggle(hex)
             }}
-            className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2 text-sm font-medium ${
+            className={`flex items-center gap-2 rounded-lg border-2 min-h-11 px-3 py-2 text-sm font-medium ${
               full ? 'opacity-40' : ''
-            } ${isOn ? 'border-stone-900' : 'border-transparent'}`}
+            } ${isOn ? 'border-ink' : 'border-transparent'}`}
             style={{ backgroundColor: hex, color: readableTextColor(hex) }}
           >
             <span aria-hidden="true">{isOn ? '✓' : '+'}</span>

@@ -53,7 +53,7 @@ export default function OptionListEditor({ label, noun, values, error, onChange 
 
   return (
     <fieldset>
-      <legend className="font-semibold">{label}</legend>
+      <legend className="text-sm text-ink-soft">{label}</legend>
       <div className="mt-2 space-y-2">
         {values.map((value, i) => (
           <div key={i} className="flex gap-2">
@@ -67,21 +67,21 @@ export default function OptionListEditor({ label, noun, values, error, onChange 
               value={value}
               onChange={(e) => onChange(values.map((v, j) => (j === i ? e.target.value : v)))}
               onKeyDown={(e) => handleKeyDown(e, i)}
-              className="min-w-0 flex-1 rounded border border-stone-400 bg-white px-3 py-2"
+              className="min-w-0 flex-1 min-h-11 rounded-lg border border-stone-500 bg-white px-3 py-2"
             />
             <button
               type="button"
               aria-label={`Remove ${noun} ${i + 1}`}
               disabled={values.length <= 1}
               onClick={() => onChange(values.filter((_, j) => j !== i))}
-              className="rounded border border-stone-400 px-3 disabled:opacity-40"
+              className="min-h-11 min-w-11 rounded-lg border border-stone-500 px-3 disabled:opacity-40"
             >
               ✕
             </button>
           </div>
         ))}
       </div>
-      <p id={hintId} className="mt-1 text-sm text-stone-700">
+      <p id={hintId} className="mt-1 text-sm text-ink-soft">
         Tip: Enter adds a row, ↑ ↓ move between rows
       </p>
       <button
@@ -91,7 +91,7 @@ export default function OptionListEditor({ label, noun, values, error, onChange 
           pendingFocus.current = { index: values.length, toEnd: false }
           onChange([...values, ''])
         }}
-        className="mt-2 text-sm font-medium text-blue-800 underline disabled:opacity-40"
+        className="mt-2 min-h-11 text-sm font-medium text-plum underline disabled:opacity-40"
       >
         + Add {noun}
       </button>
